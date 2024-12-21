@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-lg font-semibold text-sm;
+  }
+  .btn-primary {
+    @apply bg-primary text-white hover:bg-primary/90;
+  }
+  .input {
+    @apply rounded-lg border-gray-300 focus:border-primary focus:ring-primary;
+  }
+}
