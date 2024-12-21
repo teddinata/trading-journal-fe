@@ -84,15 +84,24 @@ const handleTransactionSubmit = async () => {
       volume: '',
       notes: ''
     }
+    toast.success('Transaction added successfully!', {
+      duration: 3000,
+      description: 'Your data has been saved. Position details are updated.'
+    })
     // Refresh position data
     await fetchPositionDetail()
   } catch (err) {
     console.error('Error adding transaction:', err)
-    transactionError.value = 'Gagal menambahkan transaksi'
+    transactionError.value = 'Failed to add transaction'
+    toast.error('Failed to add transaction!', {
+      duration: 3000,
+      description: 'An error occurred while saving the data. Please try again or contact support if the issue persists.'
+    })
   } finally {
     transactionLoading.value = false
   }
 }
+
 
 // Validate transaction form
 const validateTransactionForm = () => {
@@ -112,10 +121,13 @@ onMounted(() => {
 # src/views/PositionDetail.vue
 <template>
   <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-    <!-- Loading State -->
-    <div v-if="loading" class="flex justify-center py-12">
-      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
+  <!-- Loading State -->
+  <div v-if="loading" class="flex items-center justify-center min-h-[400px]">
+    <div class="flex flex-col items-center space-y-4">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div>
+      <p class="text-sm text-gray-400">Loading position details...</p>
     </div>
+  </div>
 
     <!-- Error State -->
     <div v-else-if="error" class="text-center py-12 text-red-400">
@@ -125,33 +137,31 @@ onMounted(() => {
     <!-- Content -->
     <div v-else-if="position" class="space-y-6">
       <!-- Header -->
-      <div class="md:flex md:items-center md:justify-between">
+      <div class="space-y-4 sm:space-y-0 sm:flex sm:items-center sm:justify-between mb-6">
         <div class="flex-1 min-w-0">
-          <h2 class="text-2xl font-bold leading-7 text-white sm:text-3xl sm:truncate">
-            {{ position.emiten }} - {{ position.type }}
-          </h2>
-          <div class="mt-1 flex flex-col sm:flex-row sm:flex-wrap sm:mt-0 sm:space-x-6">
-            <div class="mt-2 flex items-center text-sm text-gray-400">
-              {{ formatDate(position.created_at) }}
-            </div>
-            <div class="mt-2 flex items-center text-sm">
-              <span 
-                class="px-2 py-1 text-xs font-medium rounded"
-                :class="position.status === 'OPEN' ? 'bg-emerald-400/10 text-emerald-400' : 'bg-gray-700 text-gray-300'"
-              >
-                {{ position.status }}
-              </span>
-            </div>
+          <div class="flex items-center">
+            <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-white truncate">
+              {{ position.emiten }} - {{ position.type }}
+            </h2>
+            <span 
+              class="ml-3 px-2 py-1 text-xs font-medium rounded"
+              :class="position.status === 'OPEN' ? 'bg-emerald-400/10 text-emerald-400' : 'bg-gray-700 text-gray-300'"
+            >
+              {{ position.status }}
+            </span>
           </div>
+          <p class="mt-1 text-sm text-gray-400">
+            {{ formatDate(position.created_at) }}
+          </p>
         </div>
       </div>
 
       <!-- Position Details Card -->
       <div class="bg-gray-800 shadow-lg rounded-lg border border-gray-700">
         <div class="px-4 py-5 sm:p-6">
-          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             <!-- Buy Range -->
-            <div>
+            <div class="p-4 bg-gray-700/50 rounded-lg border border-gray-600">
               <h3 class="text-sm font-medium text-gray-400">Buy Range</h3>
               <div class="mt-1 flex space-x-2">
                 <span class="text-lg font-medium text-white">
@@ -243,69 +253,77 @@ onMounted(() => {
       </div>
 
       <!-- Transactions Table -->
-      <div class="bg-gray-800 shadow-lg rounded-lg border border-gray-700">
+      <!-- Transactions Table -->
+      <div class="bg-gray-800 shadow-lg rounded-lg border border-gray-700 overflow-hidden">
         <div class="px-4 py-5 sm:p-6">
-          <div class="flex justify-between items-center mb-4">
+          <!-- Header dengan action button -->
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
             <h3 class="text-lg font-medium text-white">Transaction History</h3>
             <button
               @click="showTransactionModal = true"
-              class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+              class="w-full sm:w-auto inline-flex items-center justify-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700"
             >
               Add Transaction
             </button>
           </div>
-          <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-700">
-              <thead>
-                <tr>
-                  <th class="px-6 py-3 bg-gray-900/50 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Date
-                  </th>
-                  <th class="px-6 py-3 bg-gray-900/50 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Type
-                  </th>
-                  <th class="px-6 py-3 bg-gray-900/50 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Price
-                  </th>
-                  <th class="px-6 py-3 bg-gray-900/50 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Volume
-                  </th>
-                  <th class="px-6 py-3 bg-gray-900/50 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Amount
-                  </th>
-                  <th class="px-6 py-3 bg-gray-900/50 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Notes
-                  </th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-700">
-                <tr v-for="transaction in position.transactions" :key="transaction.id">
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                    {{ formatDate(transaction.date) }}
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span 
-                      class="px-2 py-1 text-xs font-medium rounded"
-                      :class="transaction.type === 'BUY' ? 'bg-emerald-400/10 text-emerald-400' : 'bg-red-400/10 text-red-400'"
-                    >
-                      {{ transaction.type }}
-                    </span>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                    {{ formatCurrency(transaction.price) }}
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                    {{ transaction.volume }}
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                    {{ formatCurrency(transaction.amount) }}
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                    {{ transaction.notes }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          
+          <!-- Table dengan scroll horizontal di mobile -->
+          <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+              <div class="overflow-hidden">
+                <table class="min-w-full divide-y divide-gray-700">
+                  <thead>
+                    <tr>
+                      <th class="px-6 py-3 bg-gray-900/50 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                        Date
+                      </th>
+                      <th class="px-6 py-3 bg-gray-900/50 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                        Type
+                      </th>
+                      <th class="px-6 py-3 bg-gray-900/50 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                        Price
+                      </th>
+                      <th class="px-6 py-3 bg-gray-900/50 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                        Volume
+                      </th>
+                      <th class="px-6 py-3 bg-gray-900/50 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                        Amount
+                      </th>
+                      <th class="px-6 py-3 bg-gray-900/50 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                        Notes
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-700">
+                    <tr v-for="transaction in position.transactions" :key="transaction.id">
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                        {{ formatDate(transaction.date) }}
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <span 
+                          class="px-2 py-1 text-xs font-medium rounded"
+                          :class="transaction.type === 'BUY' ? 'bg-emerald-400/10 text-emerald-400' : 'bg-red-400/10 text-red-400'"
+                        >
+                          {{ transaction.type }}
+                        </span>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                        {{ formatCurrency(transaction.price) }}
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                        {{ transaction.volume }}
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                        {{ formatCurrency(transaction.amount) }}
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                        {{ transaction.notes }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -319,13 +337,28 @@ onMounted(() => {
       </div>
 
       <!-- Transaction Modal -->
-      <div v-if="showTransactionModal" class="fixed inset-0 z-10 overflow-y-auto">
-        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-          <!-- Background overlay -->
-          <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" @click="showTransactionModal = false"></div>
+      <!-- Transaction Modal -->
+      <div v-if="showTransactionModal" class="fixed inset-0 z-50 overflow-y-auto" role="dialog">
+        <div class="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
+          <div 
+            class="fixed inset-0 bg-gray-900/75 transition-opacity"
+            @click="showTransactionModal = false"
+          ></div>
 
           <!-- Modal panel -->
-          <div class="inline-block align-bottom bg-gray-800 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6 border border-gray-700">
+          <div class="relative transform overflow-hidden rounded-lg bg-gray-800 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 w-full sm:max-w-lg sm:p-6 border border-gray-700">
+             <!-- Modal content dengan improved mobile layout -->
+              <div class="absolute right-4 top-4">
+                <button 
+                  @click="showTransactionModal = false"
+                  class="text-gray-400 hover:text-gray-300"
+                >
+                  <span class="sr-only">Close</span>
+                  <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
             <!-- Modal content -->
             <div class="sm:flex sm:items-start">
               <div class="w-full">
@@ -391,24 +424,24 @@ onMounted(() => {
                   </div>
 
                   <!-- Form Actions -->
-                  <div class="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3">
-                    <button
-                      type="button"
-                      class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-600 shadow-sm px-4 py-2 bg-gray-700 text-base font-medium text-gray-300 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 sm:mt-0"
-                      @click="showTransactionModal = false"
-                    >
-                      Cancel
-                    </button>
+                  <div class="mt-5 sm:mt-6 flex flex-col sm:flex-row-reverse gap-3 sm:gap-4">
                     <button
                       type="submit"
                       :disabled="transactionLoading"
-                      class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-emerald-600 text-base font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+                      class="w-full sm:w-auto flex-1 inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-emerald-600 text-base font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
                     >
                       <svg v-if="transactionLoading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
                       {{ transactionLoading ? 'Adding...' : 'Add Transaction' }}
+                    </button>
+                    <button
+                      type="button"
+                      class="w-full sm:w-auto flex-1 inline-flex justify-center rounded-md border border-gray-600 shadow-sm px-4 py-2 bg-gray-700 text-base font-medium text-gray-300 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 sm:mt-0"
+                      @click="showTransactionModal = false"
+                    >
+                      Cancel
                     </button>
                   </div>
                 </form>

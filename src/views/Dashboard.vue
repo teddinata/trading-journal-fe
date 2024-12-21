@@ -13,7 +13,7 @@
 
     <template v-else>
       <!-- Header Stats -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         <!-- Cards menggunakan StatsCard component yang sudah disesuaikan -->
         <StatsCard
           title="Total P&L"
@@ -49,7 +49,7 @@
       </div>
 
       <!-- Trading Activity & Chart -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         <!-- Chart -->
         <div class="bg-gray-800 rounded-xl shadow-lg border border-gray-700">
           <div class="p-6 border-b border-gray-700">

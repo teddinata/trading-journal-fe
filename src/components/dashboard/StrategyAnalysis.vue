@@ -1,16 +1,15 @@
 # src/components/dashboard/StrategyAnalysis.vue
 <template>
   <div class="bg-gray-800 rounded-xl shadow-lg border border-gray-700">
-    <div class="p-6 border-b border-gray-700">
-      <h2 class="text-lg font-semibold text-white">Analisis Strategi Trading</h2>
+    <div class="p-4 md:p-6 border-b border-gray-700">
+      <h2 class="text-base md:text-lg font-semibold text-white">Analisis Strategi Trading</h2>
     </div>
     
-    <div class="p-6">
-      <div class="space-y-8">
-        <!-- Strategy Card untuk setiap strategi -->
+    <div class="p-4 md:p-6">
+      <div class="space-y-6 md:space-y-8">
         <div v-for="strategy in strategies" :key="strategy.name" class="space-y-4">
-          <!-- Header Strategi -->
-          <div class="flex justify-between items-center">
+          <!-- Header Strategi - Responsive -->
+          <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-2 sm:space-y-0">
             <div>
               <h3 class="text-lg font-medium text-white">{{ strategy.name }}</h3>
               <p class="text-sm text-gray-400">{{ strategy.metrics.total_trades }} trades</p>
@@ -60,7 +59,7 @@
 
           <!-- Progress Bar & Additional Info -->
           <div class="space-y-2">
-            <div class="flex justify-between text-sm">
+            <div class="flex justify-between text-xs md:text-sm">
               <span class="text-gray-400">Performance Meter</span>
               <span class="font-medium text-white">{{ strategy.metrics.win_rate }}% Win Rate</span>
             </div>
@@ -74,7 +73,7 @@
 
           <!-- Additional Analysis -->
           <div class="mt-4 pt-4 border-t border-gray-700">
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
               <div>
                 <span class="text-sm text-gray-400">Holding Period</span>
                 <p class="mt-1 font-medium text-white">

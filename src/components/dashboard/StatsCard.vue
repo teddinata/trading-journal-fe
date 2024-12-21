@@ -1,7 +1,7 @@
-# src/components/dashboard/StatsCard.vue
+<!-- # src/components/dashboard/StatsCard.vue -->
 <template>
-  <div class="bg-gray-800 rounded-xl shadow-lg border border-gray-700 p-6 hover:bg-gray-750 transition-all">
-    <div class="flex items-center justify-between">
+  <div class="bg-gray-800 rounded-xl shadow-lg border border-gray-700 p-4 md:p-6 hover:bg-gray-750 transition-all">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
       <div class="flex items-center space-x-3">
         <div 
           class="p-2 rounded-lg"
@@ -9,11 +9,11 @@
         >
           <component 
             :is="icon" 
-            class="h-5 w-5"
+            class="h-4 w-4 md:h-5 md:w-5"
             :class="iconColorClass"
           />
         </div>
-        <h3 class="text-sm font-medium text-gray-400">{{ title }}</h3>
+        <h3 class="text-xs md:text-sm font-medium text-gray-400">{{ title }}</h3>
       </div>
       <div 
         v-if="showTrend"
@@ -22,16 +22,16 @@
       >
         <component 
           :is="trendIcon" 
-          class="h-4 w-4"
+          class="h-3 w-3 md:h-4 md:w-4"
         />
-        <span class="text-sm font-medium">{{ trendValue }}</span>
+        <span class="text-xs md:text-sm font-medium">{{ trendValue }}</span>
       </div>
     </div>
-    <div class="mt-4">
-      <p class="text-2xl font-bold" :class="valueClass">
+    <div class="mt-3 md:mt-4">
+      <p class="text-xl md:text-2xl font-bold" :class="valueClass">
         {{ formattedValue }}
       </p>
-      <p v-if="subtitle" class="mt-2 text-sm text-gray-400">
+      <p v-if="subtitle" class="mt-1 md:mt-2 text-xs md:text-sm text-gray-400">
         {{ subtitle }}
       </p>
     </div>
