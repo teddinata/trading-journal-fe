@@ -1,6 +1,7 @@
 <!-- # src/views/Dashboard.vue -->
 <template>
   <div class="space-y-6 p-6 bg-gray-900">
+    <Toaster position="top-right" />
     <!-- Loading State -->
     <div v-if="loading" class="flex justify-center items-center min-h-[300px]">
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div>

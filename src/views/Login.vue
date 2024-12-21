@@ -13,7 +13,7 @@
       
       <!-- Woman Working Illustration -->
       <div class="absolute right-20 top-1/2 -translate-y-1/2">
-        <img src="/public/programmer.svg" alt="Woman Working" class="w-80 h-80 opacity-80" />
+        <img src="/programmer.svg" alt="Woman Working" class="w-80 h-80 opacity-80" />
       </div>
     </div>
 

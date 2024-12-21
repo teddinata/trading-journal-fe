@@ -260,6 +260,7 @@ const hideTooltip = () => {
   <!-- Container utama dengan padding responsive -->
   <div class="min-h-screen bg-gray-900">
     <div class="max-w-8xl mx-auto py-4 sm:py-6 px-3 sm:px-6 lg:px-8">
+    <Toaster position="top-right" />
       <!-- Mobile Header - Hanya muncul di mobile -->
       <div class="lg:hidden mb-4">
         <h1 class="text-xl font-semibold text-white">Create New Position</h1>
