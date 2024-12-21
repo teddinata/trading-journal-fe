@@ -201,11 +201,13 @@ const handleSubmit = async () => {
     
     const response = await tradingPositionsService.createPosition(payload)
     
-    if (response.data.status === 'success') {
-      toast.success('Position Created Successfully!', {
+    // Cek response.status, bukan response.data.status
+    if (response.status === 201 || response.status === 200) {
+      toast.success('Position Created!', {
         duration: 3000,
-        description: 'Redirecting you to the journal...'
+        description: response.data.message || 'Position has been created successfully'
       })
+      
       // Reset form
       form.value = {
         emiten: '',
@@ -221,25 +223,14 @@ const handleSubmit = async () => {
         notes: ''
       }
       setTimeout(() => router.push({ name: 'Journal' }), 1000)
-    } else {
-      throw new Error(response.data.message || 'Failed to create position')
     }
   } catch (err) {
     console.error('Error creating position:', err)
-    error.value = err.message || 'Gagal membuat posisi trading baru'
+    error.value = 'Gagal membuat posisi trading baru'
     toast.error('Failed to Create Position', {
       duration: 4000,
-      description: err.response?.data?.message || 'An error occurred while creating the position. Please try again.'
+      description: err.response?.data?.message || 'An error occurred. Please try again.'
     })
-    
-    // Jika error validasi dari backend
-    if (err.response?.status === 422 && err.response?.data?.errors) {
-      const validationErrors = err.response.data.errors
-      toast.error('Validation Error', {
-        duration: 4000,
-        description: Object.values(validationErrors)[0][0] // Ambil pesan error pertama
-      })
-    }
   } finally {
     loading.value = false
   }

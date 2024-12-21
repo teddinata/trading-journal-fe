@@ -77,7 +77,8 @@ const handleTransactionSubmit = async () => {
     
     const response = await tradingPositionsService.addTransaction(route.params.id, payload)
     
-    if (response.data.status === 'success') {
+    // Cek response.status, bukan response.data.status
+    if (response.status === 200 || response.status === 201) {
       showTransactionModal.value = false
       // Reset form
       transactionForm.value = {
@@ -86,21 +87,19 @@ const handleTransactionSubmit = async () => {
         volume: '',
         notes: ''
       }
-      toast.success('Transaction added successfully!', {
+      toast.success('Transaction Added!', {
         duration: 3000,
-        description: 'Your data has been saved. Position details are updated.'
+        description: response.data.message || 'Transaction has been added successfully'
       })
       // Refresh position data
       await fetchPositionDetail()
-    } else {
-      throw new Error(response.data.message || 'Failed to add transaction')
     }
   } catch (err) {
     console.error('Error adding transaction:', err)
     transactionError.value = err.message || 'Failed to add transaction'
-    toast.error('Failed to add transaction!', {
-      duration: 3000,
-      description: err.message || 'An error occurred while saving the data.'
+    toast.error('Failed to Add Transaction', {
+      duration: 4000,
+      description: err.response?.data?.message || 'An error occurred. Please try again.'
     })
   } finally {
     transactionLoading.value = false
