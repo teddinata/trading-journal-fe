@@ -177,6 +177,10 @@ const validateForm = () => {
 const handleSubmit = async () => {
   if (!validateForm()) {
     error.value = 'Harap perbaiki error yang ada sebelum menyimpan'
+    toast.error('Validation Error', {
+      duration: 4000,
+      description: 'Please fix all errors before submitting'
+    })
     return
   }
   
@@ -195,15 +199,47 @@ const handleSubmit = async () => {
       take_profit_2: Number(form.value.take_profit_2)
     }
     
-    await tradingPositionsService.createPosition(payload)
-    toast.success('Data has been successfully created!', {
-      duration: 3000,
-      description: 'Redirecting you to the journal...'
-    })
-    setTimeout(() => router.push({ name: 'Journal' }), 1000)
+    const response = await tradingPositionsService.createPosition(payload)
+    
+    if (response.data.status === 'success') {
+      toast.success('Position Created Successfully!', {
+        duration: 3000,
+        description: 'Redirecting you to the journal...'
+      })
+      // Reset form
+      form.value = {
+        emiten: '',
+        type: 'BUY',
+        buy_range_low: '',
+        buy_range_high: '',
+        entry_price: '',
+        volume: '',
+        stop_loss: '',
+        take_profit_1: '',
+        take_profit_2: '',
+        strategy: '',
+        notes: ''
+      }
+      setTimeout(() => router.push({ name: 'Journal' }), 1000)
+    } else {
+      throw new Error(response.data.message || 'Failed to create position')
+    }
   } catch (err) {
     console.error('Error creating position:', err)
-    error.value = 'Gagal membuat posisi trading baru'
+    error.value = err.message || 'Gagal membuat posisi trading baru'
+    toast.error('Failed to Create Position', {
+      duration: 4000,
+      description: err.response?.data?.message || 'An error occurred while creating the position. Please try again.'
+    })
+    
+    // Jika error validasi dari backend
+    if (err.response?.status === 422 && err.response?.data?.errors) {
+      const validationErrors = err.response.data.errors
+      toast.error('Validation Error', {
+        duration: 4000,
+        description: Object.values(validationErrors)[0][0] // Ambil pesan error pertama
+      })
+    }
   } finally {
     loading.value = false
   }
