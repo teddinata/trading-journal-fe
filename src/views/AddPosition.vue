@@ -199,13 +199,13 @@ const handleSubmit = async () => {
       take_profit_2: Number(form.value.take_profit_2)
     }
     
-    const response = await tradingPositionsService.createPosition(payload)
+    const result = await tradingPositionsService.createPosition(payload)
     
-    // Cek response.status, bukan response.data.status
-    if (response.status === 201 || response.status === 200) {
+    // Check result.status karena service return response.data
+    if (result.status === 'success') {
       toast.success('Position Created!', {
         duration: 3000,
-        description: response.data.message || 'Position has been created successfully'
+        description: result.message || 'Position has been created successfully'
       })
       
       // Reset form

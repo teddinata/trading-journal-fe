@@ -75,10 +75,10 @@ const handleTransactionSubmit = async () => {
       volume: Number(transactionForm.value.volume)
     }
     
-    const response = await tradingPositionsService.addTransaction(route.params.id, payload)
+    const result = await tradingPositionsService.addTransaction(route.params.id, payload)
     
-    // Cek response.status, bukan response.data.status
-    if (response.status === 200 || response.status === 201) {
+    // Check result.status karena service return response.data
+    if (result.status === 'success') {
       showTransactionModal.value = false
       // Reset form
       transactionForm.value = {
@@ -89,7 +89,7 @@ const handleTransactionSubmit = async () => {
       }
       toast.success('Transaction Added!', {
         duration: 3000,
-        description: response.data.message || 'Transaction has been added successfully'
+        description: result.message || 'Transaction has been added successfully'
       })
       // Refresh position data
       await fetchPositionDetail()
