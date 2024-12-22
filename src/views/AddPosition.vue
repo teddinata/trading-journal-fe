@@ -3,7 +3,7 @@
 import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { tradingPositionsService } from '@/service/tradingPositionService'
-import { toast } from 'vue-sonner'
+import { toast, Toaster } from 'vue-sonner'
 
 
 // Component state
@@ -178,8 +178,9 @@ const handleSubmit = async () => {
   if (!validateForm()) {
     error.value = 'Harap perbaiki error yang ada sebelum menyimpan'
     toast.error('Validation Error', {
+      description: 'Please fix all errors before submitting',
       duration: 4000,
-      description: 'Please fix all errors before submitting'
+      position: 'top-right',
     })
     return
   }
@@ -201,11 +202,11 @@ const handleSubmit = async () => {
     
     const result = await tradingPositionsService.createPosition(payload)
     
-    // Check result.status karena service return response.data
     if (result.status === 'success') {
       toast.success('Position Created!', {
+        description: result.message || 'Position has been created successfully',
         duration: 3000,
-        description: result.message || 'Position has been created successfully'
+        position: 'top-right',
       })
       
       // Reset form
@@ -228,8 +229,9 @@ const handleSubmit = async () => {
     console.error('Error creating position:', err)
     error.value = 'Gagal membuat posisi trading baru'
     toast.error('Failed to Create Position', {
+      description: err.response?.data?.message || 'An error occurred. Please try again.',
       duration: 4000,
-      description: err.response?.data?.message || 'An error occurred. Please try again.'
+      position: 'top-right',
     })
   } finally {
     loading.value = false

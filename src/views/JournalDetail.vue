@@ -3,6 +3,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { tradingPositionsService } from '@/service/tradingPositionService'
+import { toast, Toaster } from 'vue-sonner' // Tambahkan import Toaster
 
 const route = useRoute()
 const loading = ref(false)
@@ -47,6 +48,10 @@ const fetchPositionDetail = async () => {
   } catch (err) {
     console.error('Error fetching position detail:', err)
     error.value = 'Gagal memuat detail posisi trading'
+    toast.error('Failed to Load Position', {
+      description: 'Unable to load position details. Please try again.',
+      duration: 4000,
+    })
   } finally {
     loading.value = false
   }
@@ -65,6 +70,16 @@ const transactionError = ref(null)
 
 // Handle transaction submission
 const handleTransactionSubmit = async () => {
+  const validationErrors = validateTransactionForm()
+  if (validationErrors.length > 0) {
+    transactionError.value = validationErrors.join(', ')
+    toast.error('Validation Error', {
+      description: validationErrors.join(', '),
+      duration: 4000,
+    })
+    return
+  }
+
   try {
     transactionLoading.value = true
     transactionError.value = null
@@ -77,7 +92,6 @@ const handleTransactionSubmit = async () => {
     
     const result = await tradingPositionsService.addTransaction(route.params.id, payload)
     
-    // Check result.status karena service return response.data
     if (result.status === 'success') {
       showTransactionModal.value = false
       // Reset form
@@ -88,8 +102,8 @@ const handleTransactionSubmit = async () => {
         notes: ''
       }
       toast.success('Transaction Added!', {
+        description: result.message || 'Transaction has been added successfully',
         duration: 3000,
-        description: result.message || 'Transaction has been added successfully'
       })
       // Refresh position data
       await fetchPositionDetail()
@@ -98,8 +112,8 @@ const handleTransactionSubmit = async () => {
     console.error('Error adding transaction:', err)
     transactionError.value = err.message || 'Failed to add transaction'
     toast.error('Failed to Add Transaction', {
+      description: err.response?.data?.message || 'An error occurred. Please try again.',
       duration: 4000,
-      description: err.response?.data?.message || 'An error occurred. Please try again.'
     })
   } finally {
     transactionLoading.value = false
@@ -125,6 +139,7 @@ onMounted(() => {
 # src/views/PositionDetail.vue
 <template>
   <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+  <Toaster position="top-right" />
   <!-- Loading State -->
   <div v-if="loading" class="flex items-center justify-center min-h-[400px]">
     <div class="flex flex-col items-center space-y-4">
