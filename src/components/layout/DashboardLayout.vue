@@ -15,10 +15,41 @@
         <span class="ml-3 text-lg font-bold">Trading Journal</span>
       </div>
 
-      <div class="flex items-center space-x-2">
-        <button class="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
-          <BellIcon class="h-5 w-5" />
+      <!-- Profile Dropdown -->
+      <div class="relative">
+        <button 
+          @click="isOpen = !isOpen"
+          class="flex items-center space-x-2 text-gray-300 hover:text-white focus:outline-none"
+        >
+          <div class="h-8 w-8 rounded-full bg-emerald-500 flex items-center justify-center">
+            <span class="text-sm font-medium text-white">
+              {{ userInitials }}
+            </span>
+          </div>
+          <ChevronDownIcon 
+            class="h-5 w-5 text-gray-400"
+            :class="{ 'transform rotate-180': isOpen }"
+          />
         </button>
+
+        <!-- Dropdown Menu -->
+        <div 
+          v-if="isOpen"
+          class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-gray-700 ring-1 ring-black ring-opacity-5"
+        >
+          <div class="py-1">
+            <div class="px-4 py-2 text-sm text-gray-300 border-b border-gray-600">
+              Signed in as<br>
+              <span class="font-medium text-white">{{ auth?.user?.email || 'User' }}</span>
+            </div>
+            <button
+              @click="handleLogout"
+              class="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white"
+            >
+              Sign out
+            </button>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -108,13 +139,41 @@
             </h2>
           </div>
 
-          <div class="flex items-center space-x-3">
-            <button class="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors">
-              <BellIcon class="h-5 w-5" />
+          <!-- Profile Dropdown -->
+          <div class="relative">
+            <button 
+              @click="isOpen = !isOpen"
+              class="flex items-center space-x-2 text-gray-300 hover:text-white focus:outline-none"
+            >
+              <div class="h-8 w-8 rounded-full bg-emerald-500 flex items-center justify-center">
+                <span class="text-sm font-medium text-white">
+                  {{ userInitials }}
+                </span>
+              </div>
+              <ChevronDownIcon 
+                class="h-5 w-5 text-gray-400"
+                :class="{ 'transform rotate-180': isOpen }"
+              />
             </button>
-            <button class="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors">
-              <Cog6ToothIcon class="h-5 w-5" />
-            </button>
+
+            <!-- Dropdown Menu -->
+            <div 
+              v-if="isOpen"
+              class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-gray-700 ring-1 ring-black ring-opacity-5"
+            >
+              <div class="py-1">
+                <div class="px-4 py-2 text-sm text-gray-300 border-b border-gray-600">
+                  Signed in as<br>
+                  <span class="font-medium text-white">{{ auth?.user?.email || 'User' }}</span>
+                </div>
+                <button
+                  @click="handleLogout"
+                  class="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-600 hover:text-white"
+                >
+                  Sign out
+                </button>
+              </div>
+            </div>
           </div>
         </header>
 
