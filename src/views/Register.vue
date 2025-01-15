@@ -146,9 +146,11 @@ const formData = reactive({
   password_confirmation: ''
 })
 
+// src/views/Register.vue
 const handleRegister = async () => {
   try {
     loading.value = true
+    // Hapus axios import, gunakan auth store
     await auth.register(formData)
     
     toast.success('Registration successful!', {
@@ -156,9 +158,10 @@ const handleRegister = async () => {
       description: 'Please login to continue...'
     })
     
-    setTimeout(() => router.push('/login'), 1000)
+    router.push('/login') // Hapus setTimeout
   } catch (error) {
-    const errorMessage = error.response?.data?.message || 'Registration failed. Please try again.'
+    // Perbaiki error handling
+    const errorMessage = error.response?.data?.message || 'Registration failed'
     toast.error('Registration failed', {
       duration: 4000,
       description: errorMessage

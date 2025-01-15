@@ -1,7 +1,7 @@
 // src/store/auth.js
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { authAPI } from '../service/api'
+import { authAPI } from '../services/api'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(null)
@@ -35,8 +35,21 @@ export const useAuthStore = defineStore('auth', () => {
     } finally {
       localStorage.removeItem('token')
       user.value = null
+      // Clear other stored data if any
     }
   }
 
-  return { user, loading, login, logout }
+  const loadUser = async () => {
+    if (localStorage.getItem('token')) {
+      try {
+        const response = await authAPI.getUser()
+        user.value = response.data
+      } catch (error) {
+        localStorage.removeItem('token')
+        user.value = null
+      }
+    }
+  }
+
+  return { user, loading, register, login, logout, loadUser }
 })

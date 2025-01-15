@@ -2,9 +2,10 @@
 import axios from '../config/axios'
 
 export const authAPI = {
-  register: (userData) => axios.post('/auth/register', userData),
-  login: (credentials) => axios.post('/auth/login', credentials),
-  logout: () => axios.post('/auth/logout')
+  register: (userData) => axios.post('/api/v1/auth/register', userData),
+  login: (credentials) => axios.post('/api/v1/auth/login', credentials),
+  logout: () => axios.post('/api/v1/auth/logout'),
+  getUser: () => axios.get('/api/v1/auth/me')
 }
 
 export const tradeAPI = {

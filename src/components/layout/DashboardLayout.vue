@@ -190,7 +190,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { 
   ChartBarIcon, 
   ClipboardDocumentListIcon, 
@@ -207,6 +207,36 @@ const version = packageJson.version
 // Sidebar State
 const isSidebarOpen = ref(false)
 const showInstallPrompt = ref(false)
+const router = useRouter()
+const auth = useAuthStore()
+const isOpen = ref(false)
+
+// Computed untuk user initials
+const userInitials = computed(() => {
+  const name = auth?.user?.name || 'U'
+  return name.charAt(0).toUpperCase()
+})
+
+// Handle logout dengan proper feedback
+const handleLogout = async () => {
+  try {
+    await auth.logout()
+    toast.success('Logged out successfully')
+    router.push('/login')
+  } catch (error) {
+    toast.error('Failed to logout')
+  } finally {
+    isOpen.value = false // Tutup dropdown setelah logout
+  }
+}
+
+// Close sidebar when route changes
+watch(router.currentRoute, () => {
+  if (window.innerWidth < 1024) {
+    isSidebarOpen.value = false
+  }
+})
+
 
 // Methods
 const toggleSidebar = () => {
