@@ -202,7 +202,7 @@ import {
 import PWAInstallPrompt from '@/components/PWAInstallPrompt.vue'
 import packageJson from '../../../package.json'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '../../store/auth'
 
 const version = packageJson.version
 
