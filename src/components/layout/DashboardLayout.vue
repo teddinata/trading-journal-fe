@@ -113,7 +113,7 @@
                 TK
               </div>
               <div class="ml-3">
-                <p class="text-sm font-medium text-white">Teddinata Kusuma</p>
+                <p class="text-sm font-medium text-white">{{ auth?.user?.name || 'User' }}</p>
                 <p class="text-xs text-gray-400">Trader</p>
               </div>
             </div>
@@ -203,6 +203,7 @@ import PWAInstallPrompt from '@/components/PWAInstallPrompt.vue'
 import packageJson from '../../../package.json'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../../store/auth'
+import { toast } from 'vue-sonner'
 
 const version = packageJson.version
 
