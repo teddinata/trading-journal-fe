@@ -128,7 +128,7 @@ const handleLogin = async () => {
       duration: 3000,
       description: 'Redirecting you to dashboard...'
     })
-    setTimeout(() => router.push('/'), 1000)
+    setTimeout(() => router.push('/dashboard'), 1000)
   } catch (error) {
     toast.error('Login failed', {
       duration: 4000,

@@ -45,9 +45,9 @@
           <!-- Navigation -->
           <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
             <router-link 
-              to="/" 
+              to="/dashboard" 
               class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-colors"
-              :class="$route.path === '/' ? 'bg-emerald-600 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'"
+              :class="$route.path === '/dashboard' ? 'bg-emerald-600 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'"
               @click="handleNavClick"
             >
               <ChartBarIcon class="h-5 w-5 mr-3" />

@@ -7,6 +7,16 @@ export const useAuthStore = defineStore('auth', () => {
   const user = ref(null)
   const loading = ref(false)
 
+  const register = async (userData) => {
+    try {
+      loading.value = true
+      const response = await authAPI.register(userData)
+      return response.data
+    } finally {
+      loading.value = false
+    }
+  }
+
   const login = async (credentials) => {
     try {
       loading.value = true

@@ -149,8 +149,7 @@ const formData = reactive({
 const handleRegister = async () => {
   try {
     loading.value = true
-    
-    const response = await axios.post('/api/v1/auth/register', formData)
+    await auth.register(formData)
     
     toast.success('Registration successful!', {
       duration: 3000,

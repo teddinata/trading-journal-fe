@@ -2,6 +2,7 @@
 import axios from '../config/axios'
 
 export const authAPI = {
+  register: (userData) => axios.post('/auth/register', userData),
   login: (credentials) => axios.post('/auth/login', credentials),
   logout: () => axios.post('/auth/logout')
 }
