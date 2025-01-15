@@ -1,4 +1,4 @@
-# src/views/Login.vue
+# src/views/Register.vue
 <template>
   <div class="min-h-screen bg-gray-900 relative overflow-hidden">
     <!-- Background Illustrations -->
@@ -24,7 +24,12 @@
           <router-link to="/" class="text-xl font-bold text-white">Trading Journal</router-link>
         </div>
         <div class="flex items-center space-x-4">
-            <router-link to="/register" class="text-sm font-medium text-gray-300 hover:text-emerald-400 transition-colors">Sign up</router-link>
+          <router-link 
+            to="/login" 
+            class="text-sm font-medium text-gray-300 hover:text-emerald-400 transition-colors"
+          >
+            Sign in
+          </router-link>
           <!-- <button class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-500 transition-colors">
             Request Demo
           </button> -->
@@ -32,30 +37,43 @@
       </div>
     </nav>
 
-    <!-- Login Container -->
+    <!-- Register Container -->
     <div class="relative z-10 max-w-md mx-auto mt-20 px-4">
       <div class="bg-gray-800 rounded-3xl shadow-2xl p-8 border border-gray-700">
         <div class="text-center mb-8">
-          <h2 class="text-2xl font-semibold mb-2 text-white">Agent Login</h2>
-          <p class="text-gray-400 text-sm">Hey, Enter your details to get sign in<br>to your account</p>
+          <h2 class="text-2xl font-semibold mb-2 text-white">Create Account</h2>
+          <p class="text-gray-400 text-sm">Join us and start tracking your trades<br>with our powerful tools</p>
         </div>
 
-        <form @submit.prevent="handleLogin" class="space-y-4">
+        <form @submit.prevent="handleRegister" class="space-y-4">
+          <!-- Name Input -->
           <div>
             <input
-              v-model="email"
-              type="email"
-              placeholder="Enter Email / Phone No"
+              v-model="formData.name"
+              type="text"
+              placeholder="Full Name"
               class="w-full px-4 py-3 rounded-xl border border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
               required
             />
           </div>
 
+          <!-- Email Input -->
+          <div>
+            <input
+              v-model="formData.email"
+              type="email"
+              placeholder="Email Address"
+              class="w-full px-4 py-3 rounded-xl border border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+              required
+            />
+          </div>
+
+          <!-- Password Input -->
           <div class="relative">
             <input
-              v-model="password"
+              v-model="formData.password"
               :type="showPassword ? 'text' : 'password'"
-              placeholder="Passcode"
+              placeholder="Password"
               class="w-full px-4 py-3 rounded-xl border border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
               required
             />
@@ -68,10 +86,15 @@
             </button>
           </div>
 
-          <div class="text-right">
-            <button type="button" class="text-sm text-gray-400 hover:text-emerald-400 transition-colors">
-              Having trouble in sign in?
-            </button>
+          <!-- Password Confirmation Input -->
+          <div class="relative">
+            <input
+              v-model="formData.password_confirmation"
+              :type="showPassword ? 'text' : 'password'"
+              placeholder="Confirm Password"
+              class="w-full px-4 py-3 rounded-xl border border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+              required
+            />
           </div>
 
           <button
@@ -84,16 +107,16 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              Signing in...
+              Creating account...
             </span>
-            <span v-else>Sign in</span>
+            <span v-else>Create Account</span>
           </button>
 
           <p class="text-center text-sm text-gray-400">
-            Don't have an account?
-            <button type="button" class="text-emerald-400 font-medium hover:text-emerald-300 ml-1 transition-colors">
-              Register Now
-            </button>
+            Already have an account?
+            <router-link to="/login" class="text-emerald-400 font-medium hover:text-emerald-300 ml-1 transition-colors">
+              Sign in
+            </router-link>
           </p>
         </form>
       </div>
@@ -105,34 +128,41 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/auth'
 import { toast } from 'vue-sonner'
+import axios from 'axios'
 
 const router = useRouter()
 const auth = useAuthStore()
-const email = ref('')
-const password = ref('')
 const showPassword = ref(false)
 const loading = ref(false)
 
-const handleLogin = async () => {
+const formData = reactive({
+  name: '',
+  email: '',
+  password: '',
+  password_confirmation: ''
+})
+
+const handleRegister = async () => {
   try {
     loading.value = true
-    await auth.login({
-      email: email.value,
-      password: password.value
-    })
-    toast.success('Login successful!', {
+    
+    const response = await axios.post('/api/v1/auth/register', formData)
+    
+    toast.success('Registration successful!', {
       duration: 3000,
-      description: 'Redirecting you to dashboard...'
+      description: 'Please login to continue...'
     })
-    setTimeout(() => router.push('/'), 1000)
+    
+    setTimeout(() => router.push('/login'), 1000)
   } catch (error) {
-    toast.error('Login failed', {
+    const errorMessage = error.response?.data?.message || 'Registration failed. Please try again.'
+    toast.error('Registration failed', {
       duration: 4000,
-      description: 'Please check your credentials and try again.'
+      description: errorMessage
     })
   } finally {
     loading.value = false
