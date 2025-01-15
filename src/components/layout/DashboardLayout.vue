@@ -201,6 +201,7 @@ import {
 } from '@heroicons/vue/24/outline'
 import PWAInstallPrompt from '@/components/PWAInstallPrompt.vue'
 import packageJson from '../../../package.json'
+import { useRouter } from 'vue-router'
 
 const version = packageJson.version
 
